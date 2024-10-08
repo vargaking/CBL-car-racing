@@ -6,8 +6,7 @@ package org.example;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
+
 
 public class App {
     public String getGreeting() {
@@ -20,16 +19,8 @@ public class App {
             frame.add(new JLabel(new App().getGreeting()));
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+            frame.pack();
             frame.setVisible(true);
-
-            // Get the default screen device
-            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-            if (gd.isFullScreenSupported()) {
-                gd.setFullScreenWindow(frame); // Set the frame to fullscreen
-            } else {
-                System.err.println("Full screen not supported");
-                frame.setSize(300, 100); // Fallback to windowed mode
-            }
         });
     }
 }
