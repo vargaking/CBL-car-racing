@@ -20,6 +20,8 @@ public class App {
             frame.add(new JLabel(new App().getGreeting()));
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+            frame.setVisible(true);
+
             // Get the default screen device
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             if (gd.isFullScreenSupported()) {
@@ -27,7 +29,6 @@ public class App {
             } else {
                 System.err.println("Full screen not supported");
                 frame.setSize(300, 100); // Fallback to windowed mode
-                frame.setVisible(true);
             }
         });
     }
