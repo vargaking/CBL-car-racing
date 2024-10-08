@@ -23,7 +23,6 @@ public class App {
             // Get the default screen device
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             if (gd.isFullScreenSupported()) {
-                frame.setUndecorated(true); // Remove window decorations
                 gd.setFullScreenWindow(frame); // Set the frame to fullscreen
             } else {
                 System.err.println("Full screen not supported");
