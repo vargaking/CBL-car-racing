@@ -9,6 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class App {
+    static JFrame frame;
+    static int screenWidth = 800;
+    static int screenHeight = 600;
 
     // Define the getGreeting method
     public String getGreeting() {
@@ -18,7 +21,7 @@ public class App {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Create the main window (frame) with a title.
-            JFrame frame = new JFrame("Ultimate Car Racing");
+            frame = new JFrame("Ultimate Car Racing");
 
             // Create a JPanel for organizing components
             JPanel panel = new JPanel(); // Create a panel
@@ -55,7 +58,7 @@ public class App {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             // Set the size of the window.
-            frame.setSize(600, 400);
+            frame.setSize(screenWidth, screenHeight);
 
             // Add the main panel to the frame
             frame.add(panel);
@@ -68,7 +71,7 @@ public class App {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     startGame(1);  // Start the game in 1-player mode
-                    frame.dispose(); // Close the opening screen
+                    //frame.dispose(); // Close the opening screen
                 }
             });
 
@@ -86,6 +89,8 @@ public class App {
                     System.exit(0); // Exit the game
                 }
             });
+
+            
         });
     }
 
@@ -94,5 +99,16 @@ public class App {
         // This is where you will call the logic to initialize and run your 2D racing game
         System.out.println("Starting game with " + numberOfPlayers + " player(s)...");
         // Game logic should go here
+
+        RaceTrack track = new RaceTrack(screenWidth, screenHeight);
+
+        RaceTrackPanel gamePanel = new RaceTrackPanel(track);
+
+        gamePanel.repaint();
+
+        frame.getContentPane().removeAll();
+        frame.add(gamePanel);
+        frame.revalidate();
+        frame.repaint();
     }
 }
