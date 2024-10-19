@@ -1,16 +1,69 @@
 package org.example;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.Timer;
+
+import org.example.RaceTrack.Point;
 import org.example.RaceTrack.Wall;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Polygon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusListener;
+import java.awt.event.FocusEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 
-public class RaceTrackPanel extends JPanel {
+public class RaceTrackPanel extends JPanel implements KeyListener {
     RaceTrack raceTrack;
+    BufferedImage carImage;
+    Car player1;
+    Timer timer;
+    KeyEvent pressedKey;
 
     RaceTrackPanel(RaceTrack track) {
         this.raceTrack = track;
+
+        // Init car
+        player1 = new Car(track.new Point(100, 500), 0, 0, 1, 5, 30, "cars/car1.png");
+    
+
+        setFocusable(true);
+        addKeyListener(this);
+        requestFocusInWindow();
+
+        // animation loop
+        timer = new Timer(1000/10, (ActionListener) new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (pressedKey != null) {
+                    switch (pressedKey.getKeyCode()) {
+                        case KeyEvent.VK_W:
+                            player1.accelerate();
+                            break;
+                        case KeyEvent.VK_A:
+                            player1.turnLeft();
+                            break;
+                        case KeyEvent.VK_S:
+                            player1.brake();
+                            break;
+                        case KeyEvent.VK_D:
+                            player1.turnRight();
+                            break;
+                    }
+                }
+
+                player1.update();
+                repaint();
+            }
+        });
+
+        timer.start();
     }
 
     @Override
@@ -50,7 +103,28 @@ public class RaceTrackPanel extends JPanel {
             g.drawLine(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
         }
 
+        // draw car image
+        if (player1.carImage != null) {
+            g.drawImage(player1.op.filter(player1.carImage, null), player1.position.x, player1.position.y, 64, 64, null);
+        }
+
         // Draw finish line
         g.setColor(Color.RED);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        System.out.println("Key typed");
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        System.out.println(e.getKeyCode());
+        pressedKey = e;
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        pressedKey = null;
     }
 }
