@@ -40,20 +40,21 @@ public class Car {
         }
     }
 
-    public void update() {
+    public void update(RaceTrack raceTrack) {
         // Update the car's position based on its speed and angle
         position.x += speed * Math.sin(Math.toRadians(angle));
         position.y -= speed * Math.cos(Math.toRadians(angle));
 
-        System.out.println(carImage.getWidth() / 2 + ", " + carImage.getHeight() / 2);
+        // Check for collision
+        if (Collision.checkCollision(this, raceTrack)) {
+            // Collision detected, stop the car
+            speed = 0; // Stop the car
+            System.out.println("Collision detected! Car stopped.");
+        }
 
+        // Update the car's rotation for rendering
         transform = AffineTransform.getRotateInstance(Math.toRadians(angle), carImage.getWidth() / 2, carImage.getHeight() / 2);
         op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
-
-
-        //transform.rotate(Math.toRadians(angle - 90));
-        //transform.translate(position.x, position.y);
-
     }
 
     public void accelerate() {

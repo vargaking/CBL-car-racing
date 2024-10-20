@@ -11,13 +11,10 @@ import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusListener;
-import java.awt.event.FocusEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class RaceTrackPanel extends JPanel implements KeyListener {
     RaceTrack raceTrack;
@@ -31,14 +28,13 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
 
         // Init car
         player1 = new Car(track.new Point(100, 500), 0, 0, 1, 5, 30, "cars/car1.png");
-    
 
         setFocusable(true);
         addKeyListener(this);
         requestFocusInWindow();
 
         // animation loop
-        timer = new Timer(1000/10, (ActionListener) new ActionListener() {
+        timer = new Timer(1000 / 10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (pressedKey != null) {
@@ -58,7 +54,7 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
                     }
                 }
 
-                player1.update();
+                player1.update(raceTrack); // Pass the raceTrack to the update method
                 repaint();
             }
         });
@@ -128,3 +124,4 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         pressedKey = null;
     }
 }
+
