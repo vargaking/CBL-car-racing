@@ -27,7 +27,7 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         this.raceTrack = track;
 
         // Init car
-        player1 = new Car(track.new Point(100, 500), 0, 0, 1, 5, 30, "cars/car1.png");
+        player1 = new Car(track.new Point(100, 400), 0, 0, 1, 5, 30, "cars/car1.png");
 
         setFocusable(true);
         addKeyListener(this);
