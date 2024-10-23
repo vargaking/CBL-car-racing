@@ -6,6 +6,9 @@ import javax.swing.Timer;
 
 import org.example.RaceTrack.Point;
 import org.example.RaceTrack.Wall;
+
+import com.google.common.graph.Graph;
+
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Polygon;
@@ -15,6 +18,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.awt.Graphics2D;
 
 public class RaceTrackPanel extends JPanel implements KeyListener {
     RaceTrack raceTrack;
@@ -27,7 +31,7 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         this.raceTrack = track;
 
         // Init car
-        player1 = new Car(track.new Point(100, 400), 0, 0, 1, 5, 30, "cars/car1.png");
+        player1 = new Car(track.new Point(100, 400), 0, 0, 1, 5, 30, "cars/car2.png", 64);
 
         setFocusable(true);
         addKeyListener(this);
@@ -101,7 +105,11 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
 
         // draw car image
         if (player1.carImage != null) {
-            g.drawImage(player1.op.filter(player1.carImage, null), player1.position.x, player1.position.y, 64, 64, null);
+            g.drawImage(player1.renderImage, (int) player1.position.x, (int) player1.position.y, player1.containerWidth, player1.containerHeight, null);
+
+            // Draw the car's hitbox
+            g.setColor(Color.RED);
+            g.drawRect((int) player1.position.x, (int) player1.position.y, player1.containerWidth, player1.containerHeight);
         }
 
         // Draw finish line
@@ -124,4 +132,3 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         pressedKey = null;
     }
 }
-

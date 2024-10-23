@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
+import java.awt.Graphics2D;
 
 public class Car {
     Point position;
@@ -16,11 +17,19 @@ public class Car {
     double turnSpeed;
     double maxSpeed;
     String carImagePath;
+    int imageHeight;
+    int imageWidth;
+    int newImageWidth;
+    int newImageHeight;
+    int containerWidth;
+    int containerHeight;
+    double scale;
     BufferedImage carImage;
+    BufferedImage renderImage;
     AffineTransform transform;
     AffineTransformOp op;
     
-    public Car(Point position, double angle, double speed, double acceleration, double turnSpeed, double maxSpeed, String carImagePath) {
+    public Car(Point position, double angle, double speed, double acceleration, double turnSpeed, double maxSpeed, String carImagePath, int imageHeight) {
         this.position = position;
         this.angle = angle;
         this.deltaRotation = 0;
@@ -35,15 +44,27 @@ public class Car {
         // Load car image
         try {
             carImage = ImageIO.read(getClass().getClassLoader().getResource(carImagePath));
+
+            this.imageHeight = imageHeight;
+            this.imageWidth = carImage.getWidth() * imageHeight / carImage.getHeight();
+            this.scale = (double) imageHeight / carImage.getHeight();
+            this.containerHeight = imageHeight;
+            this.containerWidth = imageWidth;
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void update(RaceTrack raceTrack) {
+        double radians = Math.toRadians(angle);
+        double cos = Math.cos(radians);
+        double sin = Math.sin(radians);
+        double cosAbs = Math.abs(cos);
+        double sinAbs = Math.abs(sin);
+
         // Update the car's position based on its speed and angle
-        position.x += speed * Math.sin(Math.toRadians(angle));
-        position.y -= speed * Math.cos(Math.toRadians(angle));
+        position.x += speed * sin;
+        position.y -= speed * cos;
 
         // Check for collision
         if (Collision.checkCollision(this, raceTrack)) {
@@ -53,8 +74,23 @@ public class Car {
         }
 
         // Update the car's rotation for rendering
-        transform = AffineTransform.getRotateInstance(Math.toRadians(angle), carImage.getWidth() / 2, carImage.getHeight() / 2);
-        op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
+        newImageWidth = (int) (carImage.getWidth() * cosAbs + carImage.getHeight() * sinAbs);
+        newImageHeight = (int) (carImage.getWidth() * sinAbs + carImage.getHeight() * cosAbs);
+
+        containerWidth = (int) (newImageWidth * scale);
+        containerHeight = (int) (newImageHeight * scale);
+
+        System.out.println("Container width: " + newImageWidth + ", Container height: " + newImageHeight + " angle: " + angle);
+
+        BufferedImage rotated = new BufferedImage(newImageWidth, newImageHeight, carImage.getType());
+        Graphics2D graphic = rotated.createGraphics();
+
+        graphic.translate((newImageWidth - carImage.getWidth()) / 2, (newImageHeight - carImage.getHeight()) / 2);
+        graphic.rotate(radians, carImage.getWidth() / 2, carImage.getHeight() / 2);
+        graphic.drawRenderedImage(carImage, null);
+        graphic.dispose();
+
+        renderImage = rotated;
     }
 
     public void accelerate() {
@@ -82,16 +118,10 @@ public class Car {
 
     public void brake() {
         // Slow down the car
-        if (speed > 0) {
-            speed -= acceleration;
-            if (speed < 0) {
-                speed = 0;
-            }
-        } else if (speed < 0) {
-            speed += acceleration;
-            if (speed > 0) {
-                speed = 0;
-            }
+        speed -= acceleration;
+
+        if (speed < -maxSpeed) {
+            speed = -maxSpeed;
         }
     }
 }
