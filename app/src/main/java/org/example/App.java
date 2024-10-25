@@ -108,6 +108,7 @@ public class App {
 
         frame.getContentPane().removeAll();
         frame.add(gamePanel);
+        gamePanel.requestFocusInWindow();
         frame.revalidate();
         frame.repaint();
     }
