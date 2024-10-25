@@ -71,7 +71,6 @@ public class App {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     startGame(1);  // Start the game in 1-player mode
-                    //frame.dispose(); // Close the opening screen
                 }
             });
 
@@ -79,7 +78,6 @@ public class App {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     startGame(2);  // Start the game in 2-player mode
-                    frame.dispose(); // Close the opening screen
                 }
             });
 
@@ -89,8 +87,6 @@ public class App {
                     System.exit(0); // Exit the game
                 }
             });
-
-            
         });
     }
 
@@ -98,17 +94,15 @@ public class App {
     private static void startGame(int numberOfPlayers) {
         // This is where you will call the logic to initialize and run your 2D racing game
         System.out.println("Starting game with " + numberOfPlayers + " player(s)...");
-        // Game logic should go here
 
+        // Create a new race track and game panel
         RaceTrack track = new RaceTrack(screenWidth, screenHeight);
-
         RaceTrackPanel gamePanel = new RaceTrackPanel(track);
 
-        gamePanel.repaint();
-
+        // Clear the frame and set the game panel
         frame.getContentPane().removeAll();
         frame.add(gamePanel);
-        frame.revalidate();
-        frame.repaint();
+        frame.revalidate(); // Refresh the frame
+        frame.repaint(); // Repaint to display the new panel
     }
 }

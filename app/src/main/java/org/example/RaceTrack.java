@@ -33,12 +33,17 @@ public class RaceTrack {
     ArrayList<Wall> innerWalls;
     ArrayList<Wall> outerWalls;
 
+    // Finish line coordinates
+    Point finishLineStart;
+    Point finishLineEnd;
+
     RaceTrack(int width, int height) {
         trackWidth = width;
         trackHeight = height;
-        outerWalls = new ArrayList<Wall>();
-        innerWalls = new ArrayList<Wall>();
+        outerWalls = new ArrayList<>();
+        innerWalls = new ArrayList<>();
 
+        // Define outer and inner walls
         outerWalls.add(new Wall(new Point(10, 10), new Point(90, 10)));
         outerWalls.add(new Wall(new Point(90, 10), new Point(90, 90)));
         outerWalls.add(new Wall(new Point(90, 90), new Point(10, 90)));
@@ -48,5 +53,27 @@ public class RaceTrack {
         innerWalls.add(new Wall(new Point(70, 30), new Point(70, 70)));
         innerWalls.add(new Wall(new Point(70, 70), new Point(30, 70)));
         innerWalls.add(new Wall(new Point(30, 70), new Point(30, 30)));
+
+        // Define finish line between outer and inner walls on the left
+        finishLineStart = new Point(10, 60);  // Near outer wall
+        finishLineEnd = new Point(30, 60);    // Near inner wall
+
+        // Print finish line points after scaling
+        System.out.println("Finish Line Start: " + finishLineStart.x + ", " + finishLineStart.y);
+        System.out.println("Finish Line End: " + finishLineEnd.x + ", " + finishLineEnd.y);
+    }
+
+    public boolean isCarCrossedFinishLine(Car car) {
+        int carX = (int) car.position.x;
+        int carY = (int) car.position.y;
+
+        // Print car position for debug
+        System.out.println("Car Position: " + carX + ", " + carY);
+
+        // Check if the car has crossed the finish line
+        return carY >= finishLineStart.y && carY <= finishLineEnd.y && carX >= finishLineStart.x && carX <= finishLineEnd.x;
     }
 }
+
+
+

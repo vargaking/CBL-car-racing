@@ -31,13 +31,14 @@ public class Car {
     Line2D carRight;
     Line2D carTop;
     Line2D carBottom;
-
+    
     Collided collided = Collided.FALSE;
-
     BufferedImage carImage;
     BufferedImage renderImage;
     AffineTransform transform;
     AffineTransformOp op;
+
+    private boolean hasCrossedFinishLine = false; // Flag for finish line crossing
 
     enum Collided {
         FALSE,
@@ -139,18 +140,14 @@ public class Car {
 
         // Check for collision
         if (collided == Collided.GOINGFORWARD) {
-            // Collision detected, stop the car
             if (speed > 0) {
-                speed = 0; // Stop the car
+                speed = 0;
             }
-
             System.out.println("Collision detected forward! Car stopped.");
         } else if (collided == Collided.GOINGBACKWARD) {
-            // Collision detected, stop the car
             if (speed < 0) {
-                speed = 0; // Stop the car
+                speed = 0;
             }
-
             System.out.println("Collision detected backward! Car stopped.");
         }
 
@@ -178,7 +175,6 @@ public class Car {
     }
 
     public void accelerate() {
-        // Increase the car's speed
         speed += acceleration;
 
         System.out.println("Speed: " + speed);
@@ -189,23 +185,29 @@ public class Car {
     }
 
     public void turnLeft() {
-        // Turn the car to the left
         angle -= turnSpeed;
         deltaRotation = -turnSpeed;
     }
 
     public void turnRight() {
-        // Turn the car to the right
         angle += turnSpeed;
         deltaRotation = turnSpeed;
     }
 
     public void brake() {
-        // Slow down the car
         speed -= acceleration;
 
         if (speed < -maxSpeed) {
             speed = -maxSpeed;
         }
+    }
+
+    // Finish line crossing methods
+    public void setHasCrossedFinishLine(boolean value) {
+        this.hasCrossedFinishLine = value;
+    }
+
+    public boolean hasCrossedFinishLine() {
+        return this.hasCrossedFinishLine;
     }
 }
