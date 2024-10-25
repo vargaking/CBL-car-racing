@@ -118,9 +118,6 @@ public class Car {
         int renderPosY = position.y - containerHeight / 2;
 
         renderPosition.setLocation(renderPosX, renderPosY);
-
-        System.out.println("Position: " + position.x + ", " + position.y);
-        System.out.println("Render position: " + renderPosition.getX() + ", " + renderPosition.getY());
     }
 
     public void update(RaceTrack raceTrack) {
@@ -176,8 +173,6 @@ public class Car {
 
     public void accelerate() {
         speed += acceleration;
-
-        System.out.println("Speed: " + speed);
 
         if (speed > maxSpeed) {
             speed = maxSpeed;

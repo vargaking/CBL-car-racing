@@ -97,12 +97,14 @@ public class App {
 
         // Create a new race track and game panel
         RaceTrack track = new RaceTrack(screenWidth, screenHeight);
-        RaceTrackPanel gamePanel = new RaceTrackPanel(track);
+
+        RaceTrackPanel gamePanel = new RaceTrackPanel(track, numberOfPlayers);
 
         // Clear the frame and set the game panel
         frame.getContentPane().removeAll();
         frame.add(gamePanel);
-        frame.revalidate(); // Refresh the frame
-        frame.repaint(); // Repaint to display the new panel
+        gamePanel.requestFocusInWindow();
+        frame.revalidate();
+        frame.repaint();
     }
 }

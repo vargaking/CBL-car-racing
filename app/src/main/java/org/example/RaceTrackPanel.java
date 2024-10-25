@@ -1,5 +1,6 @@
 package org.example;
 
+import javax.annotation.Syntax;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -11,20 +12,27 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import java.util.ArrayList;
+
 public class RaceTrackPanel extends JPanel implements KeyListener {
-    private RaceTrack raceTrack;
-    private Car player1;
-    private Timer timer;
-    private KeyEvent pressedKey;
-    private TimerManager timerManager;
-    private static final int TOTAL_LAPS = 5; // Limit to 5 laps
+    RaceTrack raceTrack;
+    BufferedImage carImage;
+    Car player1;
+    Car player2;
+    int numberOfPlayers;
+    Timer timer;
+    ArrayList<Integer> keysPressed = new ArrayList<Integer>();
 
-    public RaceTrackPanel(RaceTrack track) {
+    RaceTrackPanel(RaceTrack track, int numberOfPlayers) {
         this.raceTrack = track;
-        this.timerManager = new TimerManager();
+        this.numberOfPlayers = numberOfPlayers;
 
-        // Initialize the car with specific starting position and image
-        player1 = new Car(track.new Point(200, 400), 0, 0, 1, 5, 30, "cars/car2.png", 64);
+        // Init cars
+        player1 = new Car(track.new Point(150, 400), 0, 0, .5, 5, 20, "cars/car2.png", 64);
+
+        if (numberOfPlayers == 2) {
+            player2 = new Car(track.new Point(200, 400), 0, 0, .5, 5, 20, "cars/car_blue.png", 64);
+        }
 
         setFocusable(true);
         addKeyListener(this);
@@ -45,6 +53,43 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
                     }
                 }
                 repaint(); // Repaint panel for visual updates
+                if (keysPressed.size() > 0) {
+                    for (int key : keysPressed) {
+                        switch (key) {
+                            case KeyEvent.VK_W:
+                                player1.accelerate();
+                                break;
+                            case KeyEvent.VK_S:
+                                player1.brake();
+                                break;
+                            case KeyEvent.VK_A:
+                                player1.turnLeft();
+                                break;
+                            case KeyEvent.VK_D:
+                                player1.turnRight();
+                                break;
+                            case KeyEvent.VK_UP:
+                                player2.accelerate();
+                                break;
+                            case KeyEvent.VK_DOWN:
+                                player2.brake();
+                                break;
+                            case KeyEvent.VK_LEFT:
+                                player2.turnLeft();
+                                break;
+                            case KeyEvent.VK_RIGHT:
+                                player2.turnRight();
+                                break;
+                        }
+                    }
+                }
+
+                player1.update(raceTrack); // Pass the raceTrack to the update method
+                if (numberOfPlayers == 2) {
+                    player2.update(raceTrack); // Pass the raceTrack to the update method
+                }
+
+                repaint();
             }
         });
 
@@ -136,11 +181,17 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        pressedKey = e;
+        // Add the key event to the list of keys pressed if it is not already in the list
+        if (!keysPressed.contains(e.getKeyCode())) {
+            keysPressed.add(e.getKeyCode());
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        pressedKey = null;
+        // Remove the key event from the list of keys pressed
+        System.out.println("Key released: " + e.getKeyCode() + " " + keysPressed.size());
+        keysPressed.remove((Integer) e.getKeyCode());
+        System.out.println("Removed " + keysPressed.size());
     }
 }
