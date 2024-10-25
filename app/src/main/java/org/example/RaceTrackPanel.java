@@ -31,7 +31,7 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         this.raceTrack = track;
 
         // Init car
-        player1 = new Car(track.new Point(100, 400), 0, 0, 1, 5, 30, "cars/car2.png", 64);
+        player1 = new Car(track.new Point(200, 400), 0, 0, 1, 5, 30, "cars/car2.png", 64);
 
         setFocusable(true);
         addKeyListener(this);
@@ -105,11 +105,20 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
 
         // draw car image
         if (player1.carImage != null) {
-            g.drawImage(player1.renderImage, (int) player1.position.x, (int) player1.position.y, player1.containerWidth, player1.containerHeight, null);
+            int carX = (int) player1.renderPosition.getX();
+            int carY = (int) player1.renderPosition.getY();
+            g.drawImage(player1.renderImage, carX, carY, player1.containerWidth, player1.containerHeight, null);
 
-            // Draw the car's hitbox
+            // Draw the car's container
             g.setColor(Color.RED);
-            g.drawRect((int) player1.position.x, (int) player1.position.y, player1.containerWidth, player1.containerHeight);
+            g.drawRect(carX, carY, player1.containerWidth, player1.containerHeight);
+        
+            // Draw the car's hitbox
+            g.setColor(Color.MAGENTA);
+            g.drawLine((int) player1.carLeft.getX1(), (int) player1.carLeft.getY1(), (int) player1.carLeft.getX2(), (int) player1.carLeft.getY2());
+            g.drawLine((int) player1.carRight.getX1(), (int) player1.carRight.getY1(), (int) player1.carRight.getX2(), (int) player1.carRight.getY2());
+            g.drawLine((int) player1.carTop.getX1(), (int) player1.carTop.getY1(), (int) player1.carTop.getX2(), (int) player1.carTop.getY2());
+            g.drawLine((int) player1.carBottom.getX1(), (int) player1.carBottom.getY1(), (int) player1.carBottom.getX2(), (int) player1.carBottom.getY2());
         }
 
         // Draw finish line
