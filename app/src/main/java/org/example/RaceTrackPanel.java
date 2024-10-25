@@ -6,18 +6,19 @@ import javax.swing.Timer;
 
 import org.example.RaceTrack.Point;
 import org.example.RaceTrack.Wall;
+
+import com.google.common.graph.Graph;
+
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusListener;
-import java.awt.event.FocusEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.awt.Graphics2D;
 
 public class RaceTrackPanel extends JPanel implements KeyListener {
     RaceTrack raceTrack;
@@ -30,15 +31,14 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         this.raceTrack = track;
 
         // Init car
-        player1 = new Car(track.new Point(100, 500), 0, 0, 1, 5, 30, "cars/car1.png");
-    
+        player1 = new Car(track.new Point(200, 400), 0, 0, 1, 5, 30, "cars/car2.png", 64);
 
         setFocusable(true);
         addKeyListener(this);
         requestFocusInWindow();
 
         // animation loop
-        timer = new Timer(1000/10, (ActionListener) new ActionListener() {
+        timer = new Timer(1000 / 10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (pressedKey != null) {
@@ -58,7 +58,7 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
                     }
                 }
 
-                player1.update();
+                player1.update(raceTrack); // Pass the raceTrack to the update method
                 repaint();
             }
         });
@@ -105,7 +105,20 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
 
         // draw car image
         if (player1.carImage != null) {
-            g.drawImage(player1.op.filter(player1.carImage, null), player1.position.x, player1.position.y, 64, 64, null);
+            int carX = (int) player1.renderPosition.getX();
+            int carY = (int) player1.renderPosition.getY();
+            g.drawImage(player1.renderImage, carX, carY, player1.containerWidth, player1.containerHeight, null);
+
+            // Draw the car's container
+            g.setColor(Color.RED);
+            g.drawRect(carX, carY, player1.containerWidth, player1.containerHeight);
+        
+            // Draw the car's hitbox
+            g.setColor(Color.MAGENTA);
+            g.drawLine((int) player1.carLeft.getX1(), (int) player1.carLeft.getY1(), (int) player1.carLeft.getX2(), (int) player1.carLeft.getY2());
+            g.drawLine((int) player1.carRight.getX1(), (int) player1.carRight.getY1(), (int) player1.carRight.getX2(), (int) player1.carRight.getY2());
+            g.drawLine((int) player1.carTop.getX1(), (int) player1.carTop.getY1(), (int) player1.carTop.getX2(), (int) player1.carTop.getY2());
+            g.drawLine((int) player1.carBottom.getX1(), (int) player1.carBottom.getY1(), (int) player1.carBottom.getX2(), (int) player1.carBottom.getY2());
         }
 
         // Draw finish line
