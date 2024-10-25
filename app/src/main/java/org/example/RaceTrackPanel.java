@@ -27,14 +27,21 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
     RaceTrack raceTrack;
     BufferedImage carImage;
     Car player1;
+    Car player2;
+    int numberOfPlayers;
     Timer timer;
     ArrayList<Integer> keysPressed = new ArrayList<Integer>();
 
-    RaceTrackPanel(RaceTrack track) {
+    RaceTrackPanel(RaceTrack track, int numberOfPlayers) {
         this.raceTrack = track;
+        this.numberOfPlayers = numberOfPlayers;
 
-        // Init car
-        player1 = new Car(track.new Point(200, 400), 0, 0, .5, 5, 20, "cars/car2.png", 64);
+        // Init cars
+        player1 = new Car(track.new Point(150, 400), 0, 0, .5, 5, 20, "cars/car2.png", 64);
+
+        if (numberOfPlayers == 2) {
+            player2 = new Car(track.new Point(200, 400), 0, 0, .5, 5, 20, "cars/car_blue.png", 64);
+        }
 
         setFocusable(true);
         addKeyListener(this);
@@ -59,11 +66,27 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
                             case KeyEvent.VK_D:
                                 player1.turnRight();
                                 break;
+                            case KeyEvent.VK_UP:
+                                player2.accelerate();
+                                break;
+                            case KeyEvent.VK_DOWN:
+                                player2.brake();
+                                break;
+                            case KeyEvent.VK_LEFT:
+                                player2.turnLeft();
+                                break;
+                            case KeyEvent.VK_RIGHT:
+                                player2.turnRight();
+                                break;
                         }
                     }
                 }
 
                 player1.update(raceTrack); // Pass the raceTrack to the update method
+                if (numberOfPlayers == 2) {
+                    player2.update(raceTrack); // Pass the raceTrack to the update method
+                }
+
                 repaint();
             }
         });
@@ -124,6 +147,25 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
             g.drawLine((int) player1.carRight.getX1(), (int) player1.carRight.getY1(), (int) player1.carRight.getX2(), (int) player1.carRight.getY2());
             g.drawLine((int) player1.carTop.getX1(), (int) player1.carTop.getY1(), (int) player1.carTop.getX2(), (int) player1.carTop.getY2());
             g.drawLine((int) player1.carBottom.getX1(), (int) player1.carBottom.getY1(), (int) player1.carBottom.getX2(), (int) player1.carBottom.getY2());
+        }
+
+        if (numberOfPlayers == 2) {
+            if (player2.carImage != null) {
+                int carX = (int) player2.renderPosition.getX();
+                int carY = (int) player2.renderPosition.getY();
+                g.drawImage(player2.renderImage, carX, carY, player2.containerWidth, player2.containerHeight, null);
+
+                // Draw the car's container
+                g.setColor(Color.RED);
+                g.drawRect(carX, carY, player2.containerWidth, player2.containerHeight);
+            
+                // Draw the car's hitbox
+                g.setColor(Color.MAGENTA);
+                g.drawLine((int) player2.carLeft.getX1(), (int) player2.carLeft.getY1(), (int) player2.carLeft.getX2(), (int) player2.carLeft.getY2());
+                g.drawLine((int) player2.carRight.getX1(), (int) player2.carRight.getY1(), (int) player2.carRight.getX2(), (int) player2.carRight.getY2());
+                g.drawLine((int) player2.carTop.getX1(), (int) player2.carTop.getY1(), (int) player2.carTop.getX2(), (int) player2.carTop.getY2());
+                g.drawLine((int) player2.carBottom.getX1(), (int) player2.carBottom.getY1(), (int) player2.carBottom.getX2(), (int) player2.carBottom.getY2());
+            }
         }
 
         // Draw finish line

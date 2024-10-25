@@ -79,7 +79,7 @@ public class App {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     startGame(2);  // Start the game in 2-player mode
-                    frame.dispose(); // Close the opening screen
+                    //frame.dispose(); // Close the opening screen
                 }
             });
 
@@ -102,7 +102,7 @@ public class App {
 
         RaceTrack track = new RaceTrack(screenWidth, screenHeight);
 
-        RaceTrackPanel gamePanel = new RaceTrackPanel(track);
+        RaceTrackPanel gamePanel = new RaceTrackPanel(track, numberOfPlayers);
 
         gamePanel.repaint();
 
