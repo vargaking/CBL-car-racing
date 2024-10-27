@@ -4,7 +4,7 @@ By: Rafael Silva and Dániel Gergely
 
 Car game for the CBL project written in Java and Swing. You can choose to play against a computer or another player.
 You can control the car using WASD and in case of two players, the other player can use the arrow keys. The game ends when one of the
-cars completes 5 laps. The project uses the Gradle build system, and we used Git (GitHub) for version control and collaboration.
+cars completes 3 laps. The project uses the Gradle build system, and we used Git (GitHub) for version control and collaboration.
 You can find the project on GitHub at https://github.com/vargaking/CBL-car-racing. The game runs on java 17.
 
 ## Installation
