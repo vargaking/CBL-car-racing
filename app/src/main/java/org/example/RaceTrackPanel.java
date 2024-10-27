@@ -39,12 +39,12 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         this.timerManager = new TimerManager();
 
         // Init cars
-        player1 = new Car(new Point2D.Double(350, 400), 0, 0, .5, 5, 20, "cars/car2.png", 64);
+        player1 = new Car(new Point2D.Double(350, 300), 0, 0, .5, 5, 20, "cars/car2.png", 64, 0);
 
         //player2 = new Car(new Point2D.Double(450, 400), 0, 0, .5, 5, 20, "cars/car_blue.png", 64);
 
         if (numberOfPlayers == 1) {
-            botPlayer = new BotCar(new Point2D.Double(450, 400), 0, 0, .5, 20, 20, "cars/car_blue.png", 64);
+            botPlayer = new BotCar(new Point2D.Double(250, 300), 0, 0, .5, 30, 7, "cars/car_blue.png", 64, 0);
             bot = new Bot(botPlayer, raceTrack, 8);
         }
 
@@ -65,7 +65,13 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
 
                 // Check for lap completion and finish line crossing
                 if (raceTrack.isCarCrossedFinishLine(player1)) {
-                    timerManager.lapCompleted();
+                    //timerManager.lapCompleted();
+                    player1.laps++;
+
+                    if (player1.laps % 4 == 0) {
+                        timerManager.lapCompleted();
+                    }
+
                     if (timerManager.isRaceComplete(TOTAL_LAPS)) {
                         animationTimer.stop(); // Stop the race when all laps are complete
                     }
@@ -81,21 +87,6 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
                     }
                 }
                 repaint(); // Repaint panel for visual updates
-
-                //player1.update(raceTrack); // Pass the raceTrack to the update method
-                //player2.update(raceTrack); // Pass the raceTrack to the update method
-
-                /*if (numberOfPlayers == 1) {
-                    if (Collision.checkCollisionBetweenCars(player1, botPlayer) == Collided.TRUE) {
-                        player1.speed = 0;
-                        botPlayer.speed = 0;
-                    }
-                } else {
-                    if (Collision.checkCollisionBetweenCars(player2, player1) == Collided.TRUE) {
-                        player1.speed = 0;
-                        player2.speed = 0;
-                    }
-                }*/
             }
         });
 
@@ -191,15 +182,24 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         
         // Draw finish line and debug its location
         g2d.setColor(Color.RED);
-        g2d.drawLine(raceTrack.finishLine.start.x, raceTrack.finishLine.start.y,
-                raceTrack.finishLine.end.x, raceTrack.finishLine.end.y);
+        for (RaceTrack.Wall wall : raceTrack.checkPoints) {
+            g2d.drawLine(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
+        }
+
+        // draw dot 
+        g2d.setColor(Color.RED);
+        RaceTrack.Point p = raceTrack.pointOnMidline(botPlayer);
+        g2d.fillOval(p.x, p.y, 10, 10);
 
         // Draw lap counter and timer information
         g2d.setColor(Color.BLACK);
-        g2d.drawString("Lap: " + timerManager.getLapsCompleted() + "/" + TOTAL_LAPS, 10, 20);
+        g2d.drawString("Lap: " + (int) player1.laps / 4 + "/" + TOTAL_LAPS, 10, 20);
+
         g2d.drawString("Bot lap: " + botPlayer.laps, 10, 80);
         g2d.drawString("Lap Time: " + formatTime(timerManager.getCurrentLapTime()), 10, 40);
         g2d.drawString("Total Time: " + formatTime(timerManager.getTotalRaceTime()), 10, 60);
+        g2d.drawString("Distance to bot next checkpoint: " + (int) raceTrack.distanceToFinishLine(botPlayer, false), 10, 100);
+        g2d.drawString("Distance to player next checkpoint: " + (int) raceTrack.distanceToFinishLine(player1, false), 10, 130);
     }
 
     private void drawWalls(Graphics2D g2d) {

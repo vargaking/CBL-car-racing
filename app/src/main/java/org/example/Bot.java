@@ -27,7 +27,7 @@ public class Bot {
     Bot(BotCar botPlayer, RaceTrack raceTrack, int maxDepth) {
         this.botPlayer = botPlayer;
         // deep copy of the player
-        this.simulatedPlayer = new BotCar(botPlayer.position, botPlayer.angle, botPlayer.speed, botPlayer.acceleration, botPlayer.turnSpeed, botPlayer.maxSpeed, botPlayer.carImagePath, botPlayer.imageHeight);
+        this.simulatedPlayer = new BotCar(botPlayer.position, botPlayer.angle, botPlayer.speed, botPlayer.acceleration, botPlayer.turnSpeed, botPlayer.maxSpeed, botPlayer.carImagePath, botPlayer.imageHeight, botPlayer.laps);
         this.raceTrack = raceTrack;
         this.maxDepth = maxDepth;
     }
@@ -37,14 +37,14 @@ public class Bot {
         int score = 0;
 
         // Check the speed of the car, the higher the speed, the higher the score
-        score += car.speed * 5;
+        score += car.speed * 3;
 
         // Check the distance to the finish line, the closer the car is to the finish line, the higher the score
-        int distanceToFinishLine = raceTrack.distanceToFinishLine(car);
-        score += raceTrack.length - distanceToFinishLine;
+        int distanceToFinishLine = raceTrack.distanceToFinishLine(car, false);
+        score += (raceTrack.length / 4 - distanceToFinishLine) / 2;
 
         // Check the number of laps completed, the more laps completed, the higher the score
-        score += car.laps * 5000;
+        score += (car.laps - botPlayer.laps) * 3000;
 
         // Check if the car has collided with the wall or another car
         if (car.collided != Car.Collided.FALSE) {
@@ -75,7 +75,6 @@ public class Bot {
                 simulatedPlayer.laps++;
             }; // Check for collisions
 
-            
             // For the first move, save it. For subsequent moves, use the first move from previousMoves
             List<Moves> newMoves = new ArrayList<>(previousMoves);
             if (depth == 0) {
@@ -128,7 +127,8 @@ public class Bot {
             botPlayer.turnSpeed,
             botPlayer.maxSpeed,
             botPlayer.carImagePath,
-            botPlayer.imageHeight
+            botPlayer.imageHeight,
+            botPlayer.laps
         );
         
         // Start the recursive search

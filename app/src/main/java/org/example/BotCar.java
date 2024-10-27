@@ -12,8 +12,8 @@ import org.example.Car.Collided;
 
 public class BotCar extends Car {
     public BotCar(Point2D position, double angle, double speed, double acceleration, double turnSpeed, double maxSpeed,
-            String carImagePath, int imageHeight) {
-        super(position, angle, speed, acceleration, turnSpeed, maxSpeed, carImagePath, imageHeight);
+            String carImagePath, int imageHeight, int laps) {
+        super(position, angle, speed, acceleration, turnSpeed, maxSpeed, carImagePath, imageHeight, laps);
     }
 
     // Add this new class for state management
