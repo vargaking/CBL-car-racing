@@ -12,7 +12,7 @@ import java.awt.geom.Point2D;
 
 public class Car {
     Point2D renderPosition = new Point2D.Double(0, 0);
-    Point position;
+    Point2D position;
     double angle;
     double deltaRotation;
     double speed;
@@ -48,9 +48,18 @@ public class Car {
         GOINGBACKWARD
     }
 
-    public Car(Point position, double angle, double speed, double acceleration, double turnSpeed, double maxSpeed,
-            String carImagePath, int imageHeight) {
-        this.position = position;
+    enum Moves {
+        ACCELERATE,
+        TURN_LEFT,
+        TURN_RIGHT,
+        BRAKE,
+        NOTHING
+    }
+
+    public Car(Point2D position, double angle, double speed, double acceleration, double turnSpeed, double maxSpeed,
+            String carImagePath, int imageHeight) {       
+        this.position = new Point2D.Double(position.getX(), position.getY());
+        System.out.println("Car position: " + this.position.getX() + ", " + this.position.getY());
         this.angle = angle;
         this.deltaRotation = 0;
         this.speed = speed;
@@ -77,8 +86,8 @@ public class Car {
     }
 
     public void calculateCarHitbox() {
-        int carX = (int) position.x;
-        int carY = (int) position.y;
+        int carX = (int) position.getX();
+        int carY = (int) position.getY();
         int carWidth = imageWidth;
         int carHeight = imageHeight;
 
@@ -117,8 +126,8 @@ public class Car {
     }
 
     void updateRenderPosition() {
-        int renderPosX = position.x - containerWidth / 2;
-        int renderPosY = position.y - containerHeight / 2;
+        int renderPosX = (int) position.getX() - containerWidth / 2;
+        int renderPosY = (int) position.getY() - containerHeight / 2;
 
         renderPosition.setLocation(renderPosX, renderPosY);
     }
@@ -143,17 +152,14 @@ public class Car {
             if (speed > 0) {
                 speed = 0;
             }
-            System.out.println("Collision detected forward! Car stopped.");
         } else if (collided == Collided.GOINGBACKWARD) {
             if (speed < 0) {
                 speed = 0;
             }
-            System.out.println("Collision detected backward! Car stopped.");
         }
 
         // Update the car's position based on its speed and angle
-        position.x += speed * sin;
-        position.y -= speed * cos;
+        position.setLocation(position.getX() + speed * sin, position.getY() - speed * cos);
 
         // Update the car's rotation for rendering
         newImageWidth = (int) (carImage.getWidth() * cosAbs + carImage.getHeight() * sinAbs);
