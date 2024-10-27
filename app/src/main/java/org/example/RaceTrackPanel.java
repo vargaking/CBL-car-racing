@@ -1,6 +1,5 @@
 package org.example;
 
-import javax.annotation.Syntax;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -15,8 +14,9 @@ import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class RaceTrackPanel extends JPanel implements KeyListener {
     RaceTrack raceTrack;
@@ -26,27 +26,30 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
     BotCar botPlayer;
     int numberOfPlayers;
     Timer animationTimer;
-    Timer botTimer;
     private TimerManager timerManager;
-    private static final int TOTAL_LAPS = 5; // Limit to 5 laps
+    private TimerManager timerManager2;
+    private static final int TOTAL_LAPS = 1; // Limit to 5 laps
     Bot bot;
 
     ArrayList<Integer> keysPressed = new ArrayList<Integer>();
+    private ArrayList<RaceResult> raceResults; // To store race results
 
     RaceTrackPanel(RaceTrack track, int numberOfPlayers) {
         this.raceTrack = track;
         this.numberOfPlayers = numberOfPlayers;
         this.timerManager = new TimerManager();
+        this.timerManager2 = new TimerManager();
+        this.raceResults = new ArrayList<>(); // Initialize the results list
 
         // Init cars
         player1 = new Car(new Point2D.Double(350, 300), 0, 0, .5, 5, 20, "cars/car2.png", 64, 0);
-
-        //player2 = new Car(new Point2D.Double(450, 400), 0, 0, .5, 5, 20, "cars/car_blue.png", 64);
 
         if (numberOfPlayers == 1) {
             botPlayer = new BotCar(new Point2D.Double(250, 300), 0, 0, .5, 30, 7, "cars/car_blue.png", 64, 0);
             bot = new Bot(botPlayer, raceTrack, 8);
         }
+
+
 
         setFocusable(true);
         addKeyListener(this);
@@ -65,7 +68,6 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
 
                 // Check for lap completion and finish line crossing
                 if (raceTrack.isCarCrossedFinishLine(player1)) {
-                    //timerManager.lapCompleted();
                     player1.laps++;
 
                     if (player1.laps % 4 == 0) {
@@ -74,16 +76,38 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
 
                     if (timerManager.isRaceComplete(TOTAL_LAPS)) {
                         animationTimer.stop(); // Stop the race when all laps are complete
+                        recordResults(); // Record results when race is complete
+                        showLeaderboard(); // Show leaderboard
                     }
                 }
 
                 if (numberOfPlayers == 1) {
                     if (raceTrack.isCarCrossedFinishLine(botPlayer)) {
                         botPlayer.laps++;
+
+                        if (botPlayer.laps % 4 == 0) {
+                            timerManager2.lapCompleted();
+                        }
+    
+                        if (timerManager2.isRaceComplete(TOTAL_LAPS)) {
+                            animationTimer.stop(); // Stop the race when all laps are complete
+                            recordResults(); // Record results when race is complete
+                            showLeaderboard(); // Show leaderboard
+                        }
                     }
                 } else {
                     if (raceTrack.isCarCrossedFinishLine(player2)) {
                         player2.laps++;
+
+                        if (player2.laps % 4 == 0) {
+                            timerManager.lapCompleted();
+                        }
+    
+                        if (timerManager2.isRaceComplete(TOTAL_LAPS)) {
+                            animationTimer.stop(); // Stop the race when all laps are complete
+                            recordResults(); // Record results when race is complete
+                            showLeaderboard(); // Show leaderboard
+                        }
                     }
                 }
                 repaint(); // Repaint panel for visual updates
@@ -110,7 +134,6 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
                 }
             }
         }).start();
-        
 
         animationTimer.start(); // Start the timer
     }
@@ -167,7 +190,6 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
 
         }
 
-        
         if (numberOfPlayers == 1) {
             if (botPlayer.renderImage != null) {
                 g2d.drawImage(botPlayer.renderImage, (int) botPlayer.renderPosition.getX(),
@@ -179,7 +201,7 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
                         (int) player2.renderPosition.getY(), player2.containerWidth, player2.containerHeight, null);
             }
         }
-        
+
         // Draw finish line and debug its location
         g2d.setColor(Color.RED);
         for (RaceTrack.Wall wall : raceTrack.checkPoints) {
@@ -260,5 +282,25 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
     public void keyReleased(KeyEvent e) {
         // Remove the key event from the list of keys pressed
         keysPressed.remove((Integer) e.getKeyCode());
+    }
+
+    private void recordResults() {
+        // Record results for player and bot (if applicable)
+        raceResults.add(new RaceResult("Player 1", timerManager.getTotalRaceTime(), timerManager.getCurrentLapTime()));
+        if (numberOfPlayers == 1) {
+            raceResults.add(new RaceResult("Bot", timerManager2.getTotalRaceTime(), timerManager2.getCurrentLapTime()));
+        }
+
+        // Sort results by total time
+        Collections.sort(raceResults, Comparator.comparingDouble(RaceResult::getTotalTime));
+    }
+
+    private void showLeaderboard() {
+        // Clear the frame and show the leaderboard
+        App.frame.getContentPane().removeAll();
+        LeaderboardPanel leaderboardPanel = new LeaderboardPanel(raceResults);
+        App.frame.add(leaderboardPanel);
+        App.frame.revalidate();
+        App.frame.repaint();
     }
 }

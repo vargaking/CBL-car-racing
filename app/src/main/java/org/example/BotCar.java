@@ -94,4 +94,14 @@ public class BotCar extends Car {
         // Update the car's position based on its speed and angle
         position.setLocation(position.getX() + speed * sin * count, position.getY() - speed * cos * count);
     }
+
+    public double getFastestLap() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getFastestLap'");
+    }
+
+    public double getTotalRaceTime() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTotalRaceTime'");
+    }
 }
