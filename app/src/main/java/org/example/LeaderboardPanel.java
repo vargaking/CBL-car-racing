@@ -31,6 +31,10 @@ public class LeaderboardPanel extends JPanel {
             data[i][1] = result.getCarName(); // Car Name
             data[i][2] = String.valueOf((int) result.getLapsCompleted()); // Total Time
             data[i][3] = formatTime(result.getFastestLap()); // Fastest Lap
+
+            if (result.getLapsCompleted() == 0) {
+                data[i][3] = "No laps completed";
+            }
         }
 
         JTable table = new JTable(data, columnNames);
