@@ -21,11 +21,15 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
     Car player2;
     int numberOfPlayers;
     Timer timer;
+    private TimerManager timerManager;
+    private static final int TOTAL_LAPS = 5; // Limit to 5 laps
+
     ArrayList<Integer> keysPressed = new ArrayList<Integer>();
 
     RaceTrackPanel(RaceTrack track, int numberOfPlayers) {
         this.raceTrack = track;
         this.numberOfPlayers = numberOfPlayers;
+        this.timerManager = new TimerManager();
 
         // Init cars
         player1 = new Car(track.new Point(150, 400), 0, 0, .5, 5, 20, "cars/car2.png", 64);
@@ -53,36 +57,7 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
                     }
                 }
                 repaint(); // Repaint panel for visual updates
-                if (keysPressed.size() > 0) {
-                    for (int key : keysPressed) {
-                        switch (key) {
-                            case KeyEvent.VK_W:
-                                player1.accelerate();
-                                break;
-                            case KeyEvent.VK_S:
-                                player1.brake();
-                                break;
-                            case KeyEvent.VK_A:
-                                player1.turnLeft();
-                                break;
-                            case KeyEvent.VK_D:
-                                player1.turnRight();
-                                break;
-                            case KeyEvent.VK_UP:
-                                player2.accelerate();
-                                break;
-                            case KeyEvent.VK_DOWN:
-                                player2.brake();
-                                break;
-                            case KeyEvent.VK_LEFT:
-                                player2.turnLeft();
-                                break;
-                            case KeyEvent.VK_RIGHT:
-                                player2.turnRight();
-                                break;
-                        }
-                    }
-                }
+                
 
                 player1.update(raceTrack); // Pass the raceTrack to the update method
                 if (numberOfPlayers == 2) {
@@ -97,12 +72,34 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
     }
 
     private void handleKeyPress() {
-        if (pressedKey != null) {
-            switch (pressedKey.getKeyCode()) {
-                case KeyEvent.VK_W -> player1.accelerate();
-                case KeyEvent.VK_A -> player1.turnLeft();
-                case KeyEvent.VK_S -> player1.brake();
-                case KeyEvent.VK_D -> player1.turnRight();
+        if (keysPressed.size() > 0) {
+            for (int key : keysPressed) {
+                switch (key) {
+                    case KeyEvent.VK_W:
+                        player1.accelerate();
+                        break;
+                    case KeyEvent.VK_S:
+                        player1.brake();
+                        break;
+                    case KeyEvent.VK_A:
+                        player1.turnLeft();
+                        break;
+                    case KeyEvent.VK_D:
+                        player1.turnRight();
+                        break;
+                    case KeyEvent.VK_UP:
+                        player2.accelerate();
+                        break;
+                    case KeyEvent.VK_DOWN:
+                        player2.brake();
+                        break;
+                    case KeyEvent.VK_LEFT:
+                        player2.turnLeft();
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        player2.turnRight();
+                        break;
+                }
             }
         }
     }
@@ -127,10 +124,10 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
 
         // Draw finish line and debug its location
         g2d.setColor(Color.RED);
-        System.out.println("Drawing finish line at: (" + raceTrack.finishLineStart.x + ", " + raceTrack.finishLineStart.y +
-                           ") to (" + raceTrack.finishLineEnd.x + ", " + raceTrack.finishLineEnd.y + ")");
-        g2d.drawLine(raceTrack.finishLineStart.x, raceTrack.finishLineStart.y, 
-                     raceTrack.finishLineEnd.x, raceTrack.finishLineEnd.y);
+        //System.out.println("Drawing finish line at: (" + raceTrack.finishLineStart.x + ", " + raceTrack.finishLineStart.y +
+        //                   ") to (" + raceTrack.finishLineEnd.x + ", " + raceTrack.finishLineEnd.y + ")");
+        g2d.drawLine(raceTrack.finishLine.start.x, raceTrack.finishLine.start.y, 
+                     raceTrack.finishLine.end.x, raceTrack.finishLine.end.y);
 
         // Draw lap counter and timer information
         g2d.setColor(Color.BLACK);
