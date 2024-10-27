@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import org.example.Car.Collided;
+import org.example.RaceTrack.Wall;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -226,11 +227,10 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
             }
         }
 
-        // Draw finish line and debug its location
+        // Draw finish line
         g2d.setColor(Color.RED);
-        for (RaceTrack.Wall wall : raceTrack.checkPoints) {
-            g2d.drawLine(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
-        }
+        Wall finishLine = raceTrack.checkPoints.get(3);
+        g2d.drawLine(finishLine.start.x, finishLine.start.y, finishLine.end.x, finishLine.end.y);
 
         // Draw lap counter and timer information
         g2d.setColor(Color.BLACK);
@@ -272,11 +272,6 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         }
 
         for (RaceTrack.Wall wall : raceTrack.outerWalls) {
-            g2d.drawLine(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
-        }
-
-        g2d.setColor(Color.CYAN);
-        for (RaceTrack.Wall wall : raceTrack.midLine) {
             g2d.drawLine(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
         }
     }
