@@ -44,7 +44,7 @@ path. The scoring system decides based on distance to the next checkpoint (we us
 collision and speed.
 (The number of reached checkpoints is taken into account only to avoid the bot trying to cheat the system).
 The logic runs in a separate thread to improve performance. We found the optimal
-depth for the search to be around 7-8, so it can run on real-time on machines such
+depth for the search to be around 7-8, so it can run real-time on machines such
 as laptops (tested on Ryzen 7 5600U and Core dual-core i5 1.6GHz).
 It has limited options compared to a human player, since it can only perform 1 action every 500 milliseconds.
 There is room for optimization, but the bot is quite competitive at its current state.
