@@ -27,7 +27,8 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
     int numberOfPlayers;
     Timer animationTimer;
     private TimerManager timerManager;
-    private static final int TOTAL_LAPS = 5; // Limit to 5 laps
+    private TimerManager timerManager2;
+    private static final int TOTAL_LAPS = 1; // Limit to 5 laps
     Bot bot;
 
     ArrayList<Integer> keysPressed = new ArrayList<Integer>();
@@ -37,6 +38,7 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         this.raceTrack = track;
         this.numberOfPlayers = numberOfPlayers;
         this.timerManager = new TimerManager();
+        this.timerManager2 = new TimerManager();
         this.raceResults = new ArrayList<>(); // Initialize the results list
 
         // Init cars
@@ -46,6 +48,8 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
             botPlayer = new BotCar(new Point2D.Double(250, 300), 0, 0, .5, 30, 7, "cars/car_blue.png", 64, 0);
             bot = new Bot(botPlayer, raceTrack, 8);
         }
+
+
 
         setFocusable(true);
         addKeyListener(this);
@@ -80,10 +84,30 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
                 if (numberOfPlayers == 1) {
                     if (raceTrack.isCarCrossedFinishLine(botPlayer)) {
                         botPlayer.laps++;
+
+                        if (botPlayer.laps % 4 == 0) {
+                            timerManager2.lapCompleted();
+                        }
+    
+                        if (timerManager2.isRaceComplete(TOTAL_LAPS)) {
+                            animationTimer.stop(); // Stop the race when all laps are complete
+                            recordResults(); // Record results when race is complete
+                            showLeaderboard(); // Show leaderboard
+                        }
                     }
                 } else {
                     if (raceTrack.isCarCrossedFinishLine(player2)) {
                         player2.laps++;
+
+                        if (player2.laps % 4 == 0) {
+                            timerManager.lapCompleted();
+                        }
+    
+                        if (timerManager2.isRaceComplete(TOTAL_LAPS)) {
+                            animationTimer.stop(); // Stop the race when all laps are complete
+                            recordResults(); // Record results when race is complete
+                            showLeaderboard(); // Show leaderboard
+                        }
                     }
                 }
                 repaint(); // Repaint panel for visual updates
@@ -264,7 +288,7 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         // Record results for player and bot (if applicable)
         raceResults.add(new RaceResult("Player 1", timerManager.getTotalRaceTime(), timerManager.getCurrentLapTime()));
         if (numberOfPlayers == 1) {
-            raceResults.add(new RaceResult("Bot", botPlayer.getTotalRaceTime(), botPlayer.getFastestLap()));
+            raceResults.add(new RaceResult("Bot", timerManager2.getTotalRaceTime(), timerManager2.getCurrentLapTime()));
         }
 
         // Sort results by total time
