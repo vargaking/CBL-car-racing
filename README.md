@@ -10,7 +10,7 @@ You can find the project on GitHub at https://github.com/vargaking/CBL-car-racin
 ## Installation
 To run the game locally, follow these steps:
 
-1. Clone the repository from GitHub or downlaod the zip file and extract it:
+1. Clone the repository from GitHub or download the zip file and extract it:
     ```sh
     git clone https://github.com/vargaking/CBL-car-racing
     cd CBL-car-racing
