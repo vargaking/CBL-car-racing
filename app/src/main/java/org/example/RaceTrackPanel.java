@@ -46,7 +46,7 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
 
         if (numberOfPlayers == 1) {
             botPlayer = new BotCar(new Point2D.Double(250, 300), 0, 0, .5, 30, 7, "cars/car_blue.png", 64, 0);
-            bot = new Bot(botPlayer, raceTrack, 8);
+            bot = new Bot(botPlayer, raceTrack, 7);
         } else {
             player2 = new Car(new Point2D.Double(250, 300), 0, 0, .5, 5, 20, "cars/car_blue.png", 64, 0);
         }
