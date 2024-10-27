@@ -53,4 +53,5 @@ There is room for optimization, but the bot is quite competitive at its current 
 - Version control and collaboration with Git
 - Gradle build system
 - Java and Swing GUI
-- Algorithm design and optimization
+- Algorithm design 
+- Threading and optimization
