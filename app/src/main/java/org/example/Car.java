@@ -28,11 +28,8 @@ public class Car {
     int containerHeight;
     double scale;
     Line2D[] carHitbox; // Array of lines representing the car's hitbox: top, bottom, left, right
-    Line2D carLeft;
-    Line2D carRight;
-    Line2D carTop;
-    Line2D carBottom;
-    
+    int laps = 0;
+
     Collided collided = Collided.FALSE;
     BufferedImage carImage;
     BufferedImage renderImage;
@@ -59,7 +56,6 @@ public class Car {
     public Car(Point2D position, double angle, double speed, double acceleration, double turnSpeed, double maxSpeed,
             String carImagePath, int imageHeight) {       
         this.position = new Point2D.Double(position.getX(), position.getY());
-        System.out.println("Car position: " + this.position.getX() + ", " + this.position.getY());
         this.angle = angle;
         this.deltaRotation = 0;
         this.speed = speed;
@@ -199,7 +195,8 @@ public class Car {
     }
 
     public void brake() {
-        speed -= acceleration;
+        if (speed > 0)
+            speed -= acceleration * 3;
 
         if (speed < -maxSpeed) {
             speed = -maxSpeed;

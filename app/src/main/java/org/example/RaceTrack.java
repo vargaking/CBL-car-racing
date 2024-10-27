@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class RaceTrack {
     static int trackWidth;
     static int trackHeight;
+    int length;
 
     public class Point {
         public int x;
@@ -65,15 +66,19 @@ public class RaceTrack {
 
         // Define finish line between outer and inner walls on the left
         finishLine = new Wall(new Point(10, 60), new Point(30, 60));
+
+        length = 0;
+
+        for (Wall wall : midLine) {
+            length += (int) Math.abs(wall.start.x - wall.end.x) + (int) Math.abs(wall.start.y - wall.end.y);
+        }
+
+        System.out.println("Track length: " + length);
     }
 
     public boolean isCarCrossedFinishLine(Car car) {
-        int carX = (int) car.position.getX();
-        int carY = (int) car.position.getY();
-
-        // Check if the car has crossed the finish line
-        return carY >= finishLine.start.y && carY <= finishLine.end.y && carX >= finishLine.start.x
-                && carX <= finishLine.end.x;
+        car.calculateCarHitbox();
+        return car.carHitbox[0].intersectsLine(finishLine.start.x, finishLine.start.y, finishLine.end.x, finishLine.end.y);
     }
 
     public int distanceToFinishLine(Car car) {

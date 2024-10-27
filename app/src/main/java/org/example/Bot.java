@@ -37,15 +37,18 @@ public class Bot {
         int score = 0;
 
         // Check the speed of the car, the higher the speed, the higher the score
-        score += car.speed * 10;
+        score += car.speed * 5;
 
         // Check the distance to the finish line, the closer the car is to the finish line, the higher the score
         int distanceToFinishLine = raceTrack.distanceToFinishLine(car);
-        score += 1000 - distanceToFinishLine;
+        score += raceTrack.length - distanceToFinishLine;
+
+        // Check the number of laps completed, the more laps completed, the higher the score
+        score += car.laps * 5000;
 
         // Check if the car has collided with the wall or another car
         if (car.collided != Car.Collided.FALSE) {
-            score -= 1000;
+            score -= 5000;
         }
 
         return score;
@@ -67,7 +70,11 @@ public class Bot {
             
             // Apply the move
             applyMove(simulatedPlayer, move);
-            simulatedPlayer.update(raceTrack); // Update physics
+            simulatedPlayer.updateWithoutRender(raceTrack, 5); // Update physics
+            if (raceTrack.isCarCrossedFinishLine(simulatedPlayer)) {
+                simulatedPlayer.laps++;
+            }; // Check for collisions
+
             
             // For the first move, save it. For subsequent moves, use the first move from previousMoves
             List<Moves> newMoves = new ArrayList<>(previousMoves);

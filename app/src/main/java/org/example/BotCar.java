@@ -23,14 +23,16 @@ public class BotCar extends Car {
         public final double speed;
         public final double deltaRotation;
         public final Collided collided;
+        public final int laps;
         
         public CarState(Point2D position, double angle, double speed, double deltaRotation, 
-                       Collided collided) {
+                       Collided collided, int laps) {
             this.position = new Point2D.Double(position.getX(), position.getY());
             this.angle = angle;
             this.speed = speed;
             this.deltaRotation = deltaRotation;
             this.collided = collided;
+            this.laps = laps;
         }
     }
 
@@ -41,7 +43,8 @@ public class BotCar extends Car {
             angle,
             speed,
             deltaRotation,
-            collided
+            collided,
+            laps
         );
     }
 
@@ -51,26 +54,44 @@ public class BotCar extends Car {
         this.speed = state.speed;
         this.deltaRotation = state.deltaRotation;
         this.collided = state.collided;
+        this.laps = state.laps;
         
         // Update render-related properties
         updateRenderPosition();
         calculateCarHitbox();
     }
 
-    // Add a method to create a deep copy of the car
-    public Car createCopy() {
-        Car copy = new Car(
-            new Point2D.Double(position.getX(), position.getY()),
-            angle,
-            speed,
-            acceleration,
-            turnSpeed,
-            maxSpeed,
-            carImagePath,
-            imageHeight
-        );
-        copy.deltaRotation = this.deltaRotation;
-        copy.collided = this.collided;
-        return copy;
+    public void updateWithoutRender(RaceTrack raceTrack) {
+        updateWithoutRender(raceTrack, 1);
+    }
+
+    public void updateWithoutRender(RaceTrack raceTrack, int count) {
+        double radians = Math.toRadians(angle);
+        double cos = Math.cos(radians);
+        double sin = Math.sin(radians);
+        double cosAbs = Math.abs(cos);
+        double sinAbs = Math.abs(sin);
+
+        updateRenderPosition();
+        calculateCarHitbox();
+
+        if (collided == Collided.FALSE)
+            collided = Collision.checkCollision(this, raceTrack);
+        else if (Collision.checkCollision(this, raceTrack) == Collided.FALSE)
+            collided = Collided.FALSE;
+
+        // Check for collision
+        if (collided == Collided.GOINGFORWARD) {
+            if (speed > 0) {
+                speed = 0;
+            }
+        } else if (collided == Collided.GOINGBACKWARD) {
+            if (speed < 0) {
+                speed = 0;
+            }
+        }
+
+        // Update the car's position based on its speed and angle
+        position.setLocation(position.getX() + speed * sin * count, position.getY() - speed * cos * count);
     }
 }

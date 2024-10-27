@@ -25,7 +25,8 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
     Car player2;
     BotCar botPlayer;
     int numberOfPlayers;
-    Timer timer;
+    Timer animationTimer;
+    Timer botTimer;
     private TimerManager timerManager;
     private static final int TOTAL_LAPS = 5; // Limit to 5 laps
     Bot bot;
@@ -43,8 +44,8 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         //player2 = new Car(new Point2D.Double(450, 400), 0, 0, .5, 5, 20, "cars/car_blue.png", 64);
 
         if (numberOfPlayers == 1) {
-            botPlayer = new BotCar(new Point2D.Double(450, 400), 0, 0, .5, 5, 20, "cars/car_blue.png", 64);
-            bot = new Bot(botPlayer, raceTrack, 5);
+            botPlayer = new BotCar(new Point2D.Double(450, 400), 0, 0, .5, 20, 20, "cars/car_blue.png", 64);
+            bot = new Bot(botPlayer, raceTrack, 8);
         }
 
         setFocusable(true);
@@ -52,35 +53,13 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         requestFocusInWindow();
 
         // Animation loop
-        timer = new Timer(1000 / 10, new ActionListener() {
+        animationTimer = new Timer(1000 / 10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleKeyPress();
                 player1.update(raceTrack); // Update car position
 
                 if (numberOfPlayers == 1) {
-                    Car.Moves nextMove = bot.searchBestMove();
-
-                    System.out.println("Next move: " + nextMove);
-
-                    switch (nextMove) {
-                        case ACCELERATE:
-                            botPlayer.accelerate();
-                            break;
-                        case BRAKE:
-                            botPlayer.brake();
-                            break;
-                        case TURN_LEFT:
-                            botPlayer.turnLeft();
-                            break;
-                        case TURN_RIGHT:
-                            botPlayer.turnRight();
-                            break;
-                        case NOTHING:
-                            // Do nothing
-                            break;
-                    }
-
                     botPlayer.update(raceTrack);
                 }
 
@@ -88,7 +67,17 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
                 if (raceTrack.isCarCrossedFinishLine(player1)) {
                     timerManager.lapCompleted();
                     if (timerManager.isRaceComplete(TOTAL_LAPS)) {
-                        timer.stop(); // Stop the race when all laps are complete
+                        animationTimer.stop(); // Stop the race when all laps are complete
+                    }
+                }
+
+                if (numberOfPlayers == 1) {
+                    if (raceTrack.isCarCrossedFinishLine(botPlayer)) {
+                        botPlayer.laps++;
+                    }
+                } else {
+                    if (raceTrack.isCarCrossedFinishLine(player2)) {
+                        player2.laps++;
                     }
                 }
                 repaint(); // Repaint panel for visual updates
@@ -107,12 +96,32 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
                         player2.speed = 0;
                     }
                 }*/
-
-                repaint();
             }
         });
 
-        timer.start(); // Start the timer
+        new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                if (numberOfPlayers == 1) {
+                    Car.Moves nextMove = bot.searchBestMove();
+                    // Execute the bot's move
+                    switch (nextMove) {
+                        case ACCELERATE: botPlayer.accelerate(); break;
+                        case BRAKE: botPlayer.brake(); break;
+                        case TURN_LEFT: botPlayer.turnLeft(); break;
+                        case TURN_RIGHT: botPlayer.turnRight(); break;
+                        case NOTHING: break;
+                    }
+                }
+                try {
+                    Thread.sleep(100 * 5); // Adjust based on bot's performance requirements
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }).start();
+        
+
+        animationTimer.start(); // Start the timer
     }
 
     private void handleKeyPress() {
@@ -165,7 +174,6 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
             g2d.drawImage(player1.renderImage, (int) player1.renderPosition.getX(),
                     (int) player1.renderPosition.getY(), player1.containerWidth, player1.containerHeight, null);
 
-            System.out.println("Player 1: " + player1.position.getX() + ", " + player1.position.getY());
         }
 
         
@@ -189,6 +197,7 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         // Draw lap counter and timer information
         g2d.setColor(Color.BLACK);
         g2d.drawString("Lap: " + timerManager.getLapsCompleted() + "/" + TOTAL_LAPS, 10, 20);
+        g2d.drawString("Bot lap: " + botPlayer.laps, 10, 80);
         g2d.drawString("Lap Time: " + formatTime(timerManager.getCurrentLapTime()), 10, 40);
         g2d.drawString("Total Time: " + formatTime(timerManager.getTotalRaceTime()), 10, 60);
     }
