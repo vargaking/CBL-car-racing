@@ -10,12 +10,13 @@ public class Collision {
         // Check collision with inner walls
         for (RaceTrack.Wall wall : raceTrack.innerWalls) {
             Line2D wallLine = new Line2D.Double(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
-            if (car.carLeft.intersectsLine(wallLine) || car.carRight.intersectsLine(wallLine) ||
-                    car.carTop.intersectsLine(wallLine) || car.carBottom.intersectsLine(wallLine)) {
-                if (car.speed > 0) {
-                    return Collided.GOINGFORWARD; // Collision detected while going forward
-                } else {
-                    return Collided.GOINGBACKWARD; // Collision detected while going backward
+            for (Line2D carLine : car.carHitbox) {
+                if (carLine.intersectsLine(wallLine)) {
+                    if (car.speed > 0) {
+                        return Collided.GOINGFORWARD; // Collision detected while going forward
+                    } else {
+                        return Collided.GOINGBACKWARD; // Collision detected while going backward
+                    }
                 }
             }
         }
@@ -23,16 +24,31 @@ public class Collision {
         // Check collision with outer walls
         for (RaceTrack.Wall wall : raceTrack.outerWalls) {
             Line2D wallLine = new Line2D.Double(wall.start.x, wall.start.y, wall.end.x, wall.end.y);
-            if (car.carLeft.intersectsLine(wallLine) || car.carRight.intersectsLine(wallLine) ||
-                    car.carTop.intersectsLine(wallLine) || car.carBottom.intersectsLine(wallLine)) {
-                if (car.speed > 0) {
-                    return Collided.GOINGFORWARD; // Collision detected while going forward
-                } else {
-                    return Collided.GOINGBACKWARD; // Collision detected while going backward
+            for (Line2D carLine : car.carHitbox) {
+                if (carLine.intersectsLine(wallLine)) {
+                    if (car.speed > 0) {
+                        return Collided.GOINGFORWARD; // Collision detected while going forward
+                    } else {
+                        return Collided.GOINGBACKWARD; // Collision detected while going backward
+                    }
                 }
             }
         }
 
         return Collided.FALSE; // No collision
     }
+
+    public static Collided checkCollisionBetweenCars(Car car1, Car car2) {
+        // Check collision between two cars
+        for (Line2D car1Line : car1.carHitbox) {
+            for (Line2D car2Line : car2.carHitbox) {
+                if (car1Line.intersectsLine(car2Line)) {
+                    return Collided.TRUE; // Collision detected
+                }
+            }
+        }
+
+        return Collided.FALSE; // No collision
+    }
+
 }

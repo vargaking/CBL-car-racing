@@ -27,6 +27,7 @@ public class Car {
     int containerWidth;
     int containerHeight;
     double scale;
+    Line2D[] carHitbox; // Array of lines representing the car's hitbox: top, bottom, left, right
     Line2D carLeft;
     Line2D carRight;
     Line2D carTop;
@@ -42,6 +43,7 @@ public class Car {
 
     enum Collided {
         FALSE,
+        TRUE,
         GOINGFORWARD,
         GOINGBACKWARD
     }
@@ -58,6 +60,7 @@ public class Car {
         this.carImagePath = carImagePath;
         this.transform = new AffineTransform();
         this.op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
+        this.carHitbox = new Line2D[4];
 
         // Load car image
         try {
@@ -107,10 +110,10 @@ public class Car {
         }
 
         // Create the car's bounding box (rectangle)
-        carLeft = new Line2D.Double(corners[0][0], corners[0][1], corners[3][0], corners[3][1]);
-        carRight = new Line2D.Double(corners[1][0], corners[1][1], corners[2][0], corners[2][1]);
-        carTop = new Line2D.Double(corners[0][0], corners[0][1], corners[1][0], corners[1][1]);
-        carBottom = new Line2D.Double(corners[2][0], corners[2][1], corners[3][0], corners[3][1]);
+        carHitbox[0] = new Line2D.Double(corners[0][0], corners[0][1], corners[1][0], corners[1][1]);
+        carHitbox[1] = new Line2D.Double(corners[2][0], corners[2][1], corners[3][0], corners[3][1]);
+        carHitbox[2] = new Line2D.Double(corners[0][0], corners[0][1], corners[3][0], corners[3][1]);
+        carHitbox[3] = new Line2D.Double(corners[1][0], corners[1][1], corners[2][0], corners[2][1]);
     }
 
     void updateRenderPosition() {

@@ -10,8 +10,8 @@ import java.awt.event.ActionListener;
 
 public class App {
     static JFrame frame;
-    static int screenWidth = 800;
-    static int screenHeight = 600;
+    static int screenWidth = 1800;
+    static int screenHeight = 900;
 
     // Define the getGreeting method
     public String getGreeting() {

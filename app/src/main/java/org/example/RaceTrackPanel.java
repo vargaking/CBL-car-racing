@@ -4,6 +4,9 @@ import javax.annotation.Syntax;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
+import org.example.Car.Collided;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,10 +35,10 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         this.timerManager = new TimerManager();
 
         // Init cars
-        player1 = new Car(track.new Point(150, 400), 0, 0, .5, 5, 20, "cars/car2.png", 64);
+        player1 = new Car(track.new Point(350, 400), 0, 0, .5, 5, 20, "cars/car2.png", 64);
 
         if (numberOfPlayers == 2) {
-            player2 = new Car(track.new Point(200, 400), 0, 0, .5, 5, 20, "cars/car_blue.png", 64);
+            player2 = new Car(track.new Point(450, 400), 0, 0, .5, 5, 20, "cars/car_blue.png", 64);
         }
 
         setFocusable(true);
@@ -62,6 +65,10 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
                 player1.update(raceTrack); // Pass the raceTrack to the update method
                 if (numberOfPlayers == 2) {
                     player2.update(raceTrack); // Pass the raceTrack to the update method
+                    if (Collision.checkCollisionBetweenCars(player2, player1) == Collided.TRUE) {
+                        player1.speed = 0;
+                        player2.speed = 0;
+                    }
                 }
 
                 repaint();
@@ -120,6 +127,13 @@ public class RaceTrackPanel extends JPanel implements KeyListener {
         if (player1.renderImage != null) {
             g2d.drawImage(player1.renderImage, (int) player1.renderPosition.getX(),
                     (int) player1.renderPosition.getY(), player1.containerWidth, player1.containerHeight, null);
+        }
+
+        if (numberOfPlayers == 2) {
+            if (player2.renderImage != null) {
+                g2d.drawImage(player2.renderImage, (int) player2.renderPosition.getX(),
+                        (int) player2.renderPosition.getY(), player2.containerWidth, player2.containerHeight, null);
+            }
         }
 
         // Draw finish line and debug its location
