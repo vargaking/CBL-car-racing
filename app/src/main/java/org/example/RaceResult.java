@@ -2,12 +2,12 @@ package org.example;
 
 public class RaceResult {
     private String carName;
-    private double totalTime;
+    private double lapsCompleted;
     private double fastestLap;
 
-    public RaceResult(String carName, double totalTime, double fastestLap) {
+    public RaceResult(String carName, double lapsCompleted, double fastestLap) {
         this.carName = carName;
-        this.totalTime = totalTime;
+        this.lapsCompleted = lapsCompleted;
         this.fastestLap = fastestLap;
     }
 
@@ -15,8 +15,8 @@ public class RaceResult {
         return carName;
     }
 
-    public double getTotalTime() {
-        return totalTime;
+    public double getLapsCompleted() {
+        return lapsCompleted;
     }
 
     public double getFastestLap() {

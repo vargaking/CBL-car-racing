@@ -22,17 +22,14 @@ public class LeaderboardPanel extends JPanel {
         add(titleLabel, BorderLayout.NORTH);
 
         // Create the leaderboard table
-        String[] columnNames = {"Position", "Car", "Total Time", "Fastest Lap"};
+        String[] columnNames = {"Position", "Car", "Laps Completed", "Fastest Lap"};
         String[][] data = new String[results.size()][4];
-
-        // Sort results by total time
-        Collections.sort(results, Comparator.comparingDouble(RaceResult::getTotalTime));
 
         for (int i = 0; i < results.size(); i++) {
             RaceResult result = results.get(i);
             data[i][0] = String.valueOf(i + 1); // Position
             data[i][1] = result.getCarName(); // Car Name
-            data[i][2] = formatTime(result.getTotalTime()); // Total Time
+            data[i][2] = String.valueOf((int) result.getLapsCompleted()); // Total Time
             data[i][3] = formatTime(result.getFastestLap()); // Fastest Lap
         }
 

@@ -5,12 +5,14 @@ public class TimerManager {
     private long lapStartTime; // Start time for the current lap
     private int lapsCompleted; // Number of laps completed
     private double totalRaceTime; // Total time for the race in seconds
+    public int fastestLap; // Fastest lap time in seconds
 
     public TimerManager() {
         startTime = System.currentTimeMillis();
         lapStartTime = startTime; // Initialize lap start time
         lapsCompleted = 0;
         totalRaceTime = 0.0; // Initialize total race time
+        fastestLap = Integer.MAX_VALUE; // Initialize fastest lap time to maximum value
     }
 
     public void lapCompleted() {
@@ -19,6 +21,10 @@ public class TimerManager {
         long lapTime = System.currentTimeMillis() - lapStartTime; // Calculate lap time in milliseconds
         totalRaceTime += lapTime / 1000.0; // Update total race time in seconds
         lapStartTime = System.currentTimeMillis(); // Reset lap start time for the next lap
+
+        if (lapTime < fastestLap) {
+            fastestLap = (int) (lapTime / 1000); // Update fastest lap time in seconds
+        }
     }
 
     public double getCurrentLapTime() {
