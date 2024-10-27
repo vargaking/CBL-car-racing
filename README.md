@@ -1,4 +1,7 @@
 # CBL-car-racing
+By: Rafael Silva and Dániel Gergely
+
+
 Car game for the CBL project written in Java and Swing. You can choose to play against a computer or another player.
 You can control the car using WASD and in case of two players, the other player can use the arrow keys. The game ends when one of the
 cars completes 5 laps. The project uses the Gradle build system, and we used Git (GitHub) for version control and collaboration.
@@ -41,6 +44,13 @@ path. The scoring system decides based on distance to the next checkpoint (we us
 collision and speed.
 (The number of reached checkpoints is taken into account only to avoid the bot trying to cheat the system).
 The logic runs in a separate thread to improve performance. We found the optimal
-depth for the search to be around 7-8, so it can run on real-time on machines such as laptops (tested on Ryzen 7 5600U).
+depth for the search to be around 7-8, so it can run on real-time on machines such
+as laptops (tested on Ryzen 7 5600U and Core dual-core i5 1.6GHz).
 It has limited options compared to a human player, since it can only perform 1 action every 500 milliseconds.
 There is room for optimization, but the bot is quite competitive at its current state.
+
+## Learning goals
+- Version control and collaboration with Git
+- Gradle build system
+- Java and Swing GUI
+- Algorithm design and optimization
